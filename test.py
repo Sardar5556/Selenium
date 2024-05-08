@@ -25,13 +25,22 @@ class productChecker:
 
         calendar = WebDriverWait(self.driver,10).until(EC.visibility_of_element_located((By.XPATH,"//*[@id=\"__next\"]/main/div[2]/div/div[2]/div[2]/div/div/div[1]/div/div/div[1]/div/img")))
         calendar.click()
-        today = datetime.now().date()
-        last_day_of_month = (today.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
-        days_remaining = (last_day_of_month - today).days
-        random_day = today.day + random.randint(0, days_remaining)
-        print(random_day)
-        date = WebDriverWait(self.driver,10).until(EC.visibility_of_element_located((By.XPATH,f"//*[@id=\"__next\"]/main/div[2]/div/div[2]/div[2]/div/div/div[1]/div/div/div[3]/div/div[2]/div/div/div/div[2]/button[{random_day}]")))
-        date.click()
+        while True:
+          random_day = random.randint(1, 31)
+          
+          date_xpath = f"//*[@id=\"__next\"]/main/div[2]/div/div[2]/div[2]/div/div/div[1]/div/div/div[3]/div/div[2]/div/div/div/div[2]/button[{random_day}]"
+          try:
+            WebDriverWait(self.driver, 1).until(EC.visibility_of_element_located((By.XPATH, f'//*[@id="__next"]/main/div[2]/div/div[2]/div[2]/div/div/div[1]/div/div/div[3]/div/div[2]/div/div/div/div[2]/button[{random_day}]/div')))
+            date = WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located((By.XPATH, date_xpath)))
+            date.click()
+            print(str(random_day) + ': Available')
+            break
+          except:
+            print(str(random_day) + ': Unavailable')
+            pass
+
+        schedule= WebDriverWait(self.driver,10).until(EC.visibility_of_element_located((By.XPATH,f"//*[@id=\"__next\"]/main/div[2]/div/div[2]/div[2]/div/div/div[1]/div/div/div[2]/div[2]/div")))
+        schedule.click()
         
         adult = WebDriverWait(self.driver,10).until(EC.visibility_of_element_located((By.XPATH,"//*[@id=\"__next\"]/main/div[2]/div/div[2]/div[2]/div/div/div[1]/div/div/div[3]/div/div[1]/button")))
         adult.click()
@@ -64,6 +73,7 @@ class productChecker:
         CVC.send_keys('2356')
         Country = WebDriverWait(self.driver,10).until(EC.visibility_of_element_located((By.XPATH,"//*[@id=\"Field-countryInput\"]/option[160]")))
         Country.click()
+        self.driver.switch_to.default_content()
         Pay = WebDriverWait(self.driver,10).until(EC.visibility_of_element_located((By.XPATH,"//*[@id=\"ga4-event-listener-checkout\"]")))
         Pay.click()
 
